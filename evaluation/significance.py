@@ -124,6 +124,10 @@ def minimum_detectable_difference(case_count: int, disagreement_count: int) -> f
 
 def tickets_needed(target_difference: float, disagreement_rate: float) -> int:
     """Paired tickets needed to detect target_difference with 80% power (alpha 0.05)."""
+    # The formula takes sqrt(disagreement_rate - target**2): outside this range it has no answer
+    # (a net gain cannot be larger than the share of tickets on which the variants disagree).
+    if not 0 < target_difference ** 2 < disagreement_rate:
+        raise ValueError("need 0 < target_difference and target_difference**2 < disagreement_rate")
     numerator = (
         1.96 * np.sqrt(disagreement_rate)
         + 0.84 * np.sqrt(disagreement_rate - target_difference ** 2)

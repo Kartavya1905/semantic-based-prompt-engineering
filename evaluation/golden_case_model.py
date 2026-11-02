@@ -4,7 +4,7 @@ WHAT IT DOES: The shape of one golden-dataset case (a ticket plus its agreed cor
               a strict JSONL loader, and helpers to check labels against the output contract and
               fingerprint the dataset file.
 WHERE IT FITS: Phase 5. The benchmark (Phase 6) loads cases through load_golden_cases().
-USED BY:      run_benchmark.py, annotation_agreement.py, scripts/freeze_golden_dataset.py, tests
+USED BY:      run_benchmark.py, annotation_agreement.py, freeze_golden_dataset.py, tests
 """
 
 import hashlib

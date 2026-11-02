@@ -87,9 +87,17 @@ class OllamaClient:
             raise LLMTransportError(f"Ollama returned HTTP {response.status_code}: {response.text}")
 
         # --- 4. Parse the reply (token counts are absent on some cached responses) --------------
-        response_body = response.json()
+        # A reply that is not Ollama's JSON (e.g. a proxy's HTML error page) is a server problem,
+        # not a bad answer: raising LLMTransportError lets the benchmark record it and resume.
+        try:
+            response_body = response.json()
+            raw_text = response_body["message"]["content"]
+        except (ValueError, KeyError, TypeError) as parse_error:
+            raise LLMTransportError(
+                f"unexpected reply from Ollama: {response.text[:200]!r}"
+            ) from parse_error
         return CompletionResult(
-            raw_text=response_body["message"]["content"],
+            raw_text=raw_text,
             latency_ms=latency_ms,
             prompt_tokens=response_body.get("prompt_eval_count", 0),
             completion_tokens=response_body.get("eval_count", 0),

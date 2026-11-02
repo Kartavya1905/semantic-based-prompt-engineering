@@ -14,6 +14,7 @@ USE:          python -m evaluation.analyze_results <results.jsonl> [<more.jsonl>
 """
 
 import argparse
+import io
 import sys
 from pathlib import Path
 
@@ -236,6 +237,9 @@ def main() -> int:
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     report_path = REPORTS_DIR / f"{parsed_args.report_name}.md"
     report_path.write_text(report_text, encoding="utf-8", newline="\n")
+    # Windows writes piped or redirected output in cp1252, which has no "→": print in UTF-8.
+    if isinstance(sys.stdout, io.TextIOWrapper):
+        sys.stdout.reconfigure(encoding="utf-8")
     print(report_text)
     print(f"Report written to {report_path}")
     return 0

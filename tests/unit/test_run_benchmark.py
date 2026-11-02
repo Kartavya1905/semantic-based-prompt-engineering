@@ -92,6 +92,29 @@ def test_editing_a_prompt_changes_the_run_keys(tmp_path):
     assert original_keys.isdisjoint(edited_keys)
 
 
+def test_editing_generation_settings_changes_the_run_keys(tmp_path):
+    # Same prompt text (same fingerprint), but a shorter answer limit can change every answer.
+    edited_prompts_root = tmp_path / "prompts"
+    shutil.copytree(get_settings().prompts_root, edited_prompts_root)
+    manifest_path = edited_prompts_root / "manifests" / "ticket_triage" / "v1_baseline.yaml"
+    manifest_text = manifest_path.read_text(encoding="utf-8")
+    assert "max_output_tokens: 512" in manifest_text
+    manifest_path.write_text(
+        manifest_text.replace("max_output_tokens: 512", "max_output_tokens: 256"), "utf-8"
+    )
+
+    config = build_config(prompt_versions=["v1_baseline"], temperatures=[0.0])
+    golden_cases = load_golden_cases(DATASET_PATH, split="dev", required_tag="smoke")
+    original_runs = plan_runs(config, golden_cases, "f" * 64, PromptRegistry())["fake-model-a"]
+    edited_runs = plan_runs(
+        config, golden_cases, "f" * 64, PromptRegistry(edited_prompts_root)
+    )["fake-model-a"]
+    assert original_runs[0].composed_prompt.prompt_fingerprint == (
+        edited_runs[0].composed_prompt.prompt_fingerprint
+    )
+    assert {run.run_key for run in original_runs}.isdisjoint(run.run_key for run in edited_runs)
+
+
 # --- 3. A full run, scored ---------------------------------------------------------------------
 async def test_oracle_run_scores_perfectly(tmp_path, answers_by_body):
     create_client, _ = oracle_factory(answers_by_body)
@@ -161,12 +184,37 @@ async def test_models_run_one_after_another(tmp_path, answers_by_body):
     assert shared_events[first_b_index - 1] == ("close", "fake-model-a")
 
 
-def test_empty_filter_is_an_error():
+async def test_a_run_killed_mid_write_resumes_cleanly(tmp_path, answers_by_body):
+    config = build_config(prompt_versions=["v1_baseline"], temperatures=[0.0])
+    first_factory, _ = oracle_factory(answers_by_body)
+    results_path = await run_experiment(config, first_factory, results_dir=tmp_path)
+
+    # Simulate a crash during the last write: the final row is cut off halfway.
+    complete_text = results_path.read_text(encoding="utf-8")
+    last_row_start = complete_text.rstrip("\n").rfind("\n") + 1
+    results_path.write_text(complete_text[: last_row_start + 40], encoding="utf-8")
+    assert len(load_result_records(results_path)) == SMOKE_CASE_COUNT - 1  # half row skipped
+
+    second_factory, _ = oracle_factory(answers_by_body)
+    await run_experiment(config, second_factory, results_dir=tmp_path)
+    final_records = load_result_records(results_path)
+    assert len(final_records) == SMOKE_CASE_COUNT  # only the cut-off run was redone
+    assert len({record["run_key"] for record in final_records}) == SMOKE_CASE_COUNT
+
+
+def test_a_broken_line_in_the_middle_is_an_error(tmp_path):
+    results_path = tmp_path / "damaged.jsonl"
+    results_path.write_text('{"run_key": "a"}\n{"run_k\n{"run_key": "c"}\n', encoding="utf-8")
+    with pytest.raises(ValueError, match="damaged.jsonl:2 is not valid JSON"):
+        load_result_records(results_path)
+
+
+def test_empty_filter_is_an_error(tmp_path):
     import asyncio
 
     config = build_config(required_tag="smoke", dataset_split="test")  # smoke is dev-only
     with pytest.raises(ValueError, match="selected no cases"):
-        asyncio.run(run_experiment(config, lambda name: OracleLLMClient({})))
+        asyncio.run(run_experiment(config, lambda name: OracleLLMClient({}), results_dir=tmp_path))
 
 
 # --- 6. Summary guard: a prompt edited without a version bump is flagged -------------------------

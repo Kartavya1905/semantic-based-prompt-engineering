@@ -213,3 +213,10 @@ def test_tickets_needed_for_a_ten_point_gain():
     # With ~28% of tickets answered differently by the two variants (as observed on dev),
     # confirming a 10-point improvement needs roughly 220 paired tickets.
     assert 200 <= tickets_needed(target_difference=0.10, disagreement_rate=0.28) <= 240
+
+
+def test_tickets_needed_rejects_an_impossible_target():
+    from evaluation.significance import tickets_needed
+
+    with pytest.raises(ValueError, match="disagreement_rate"):
+        tickets_needed(target_difference=0.5, disagreement_rate=0.1)  # 0.25 > 0.1

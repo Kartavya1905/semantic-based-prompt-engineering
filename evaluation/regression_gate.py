@@ -15,6 +15,7 @@ USE:          python -m evaluation.regression_gate approve configs/gates/ci_smok
 """
 
 import argparse
+import io
 import json
 import os
 import sys
@@ -29,8 +30,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from evaluation.experiment_config import load_experiment_config
 from evaluation.golden_case_model import compute_dataset_sha256, load_golden_cases
+from evaluation.run_benchmark import plan_runs
 from evaluation.summarize_results import load_quality_frame
-from prompt_engine.composer import PromptComposer
 from prompt_engine.registry import PromptRegistry
 from prompt_engine.settings import PROJECT_ROOT, get_settings
 
@@ -64,41 +65,31 @@ def load_gate_config(gate_path: Path) -> GateConfig:
     return GateConfig.model_validate(yaml.safe_load(gate_path.read_text(encoding="utf-8")))
 
 
-# --- 2. Pick the rows under test: the gate's variant + model + the prompt AS IT IS ON DISK -------
-# A results file may hold runs of several edits of the prompt (including a reverted bad edit).
-# Only rows whose fingerprint matches the current prompt files say anything about this change.
-def current_prompt_fingerprint(gate: GateConfig) -> str:
-    experiment = load_experiment_config(PROJECT_ROOT / gate.experiment_config)
-    registry = PromptRegistry()
-    manifest = registry.load_manifest(experiment.prompt_id, gate.prompt_version)
-    any_case = load_golden_cases(experiment.resolved_dataset_path)[0]
-    return PromptComposer(registry).compose(manifest, any_case.input_variables).prompt_fingerprint
-
-
-# The same prompt may also have been run against an older answer key (e.g. v1 and v2): only rows
-# scored against the experiment's CURRENT answer key belong to this check.
-def current_dataset_sha256(gate: GateConfig) -> str:
-    experiment = load_experiment_config(PROJECT_ROOT / gate.experiment_config)
-    return compute_dataset_sha256(experiment.resolved_dataset_path)[:12]
+# --- 2. Pick the rows under test: exactly the runs the gate's experiment would make NOW ---------
+# A results file may hold runs of several edits of the prompt (including a reverted bad edit),
+# of an older answer key, or of other generation settings. The run key names all of these, so
+# the rows that belong to this check are the ones whose key the experiment plans today.
+def planned_run_keys(gate: GateConfig) -> set[str]:
+    experiment = load_experiment_config(PROJECT_ROOT / gate.experiment_config).model_copy(
+        update={"prompt_versions": [gate.prompt_version], "model_names": [gate.model_name]}
+    )
+    golden_cases = load_golden_cases(
+        experiment.resolved_dataset_path, split=experiment.dataset_split,
+        required_tag=experiment.required_tag,
+    )
+    dataset_sha256 = compute_dataset_sha256(experiment.resolved_dataset_path)
+    planned_runs = plan_runs(experiment, golden_cases, dataset_sha256, PromptRegistry())
+    return {planned_run.run_key for planned_run in planned_runs[gate.model_name]}
 
 
 def select_variant_rows(
-    quality_frame: pd.DataFrame,
-    gate: GateConfig,
-    prompt_fingerprint: str,
-    dataset_sha256: str | None = None,
+    quality_frame: pd.DataFrame, gate: GateConfig, run_keys: set[str]
 ) -> pd.DataFrame:
-    variant_rows = quality_frame[
-        (quality_frame["prompt_version"] == gate.prompt_version)
-        & (quality_frame["model_name"] == gate.model_name)
-        & (quality_frame["prompt_fingerprint"] == prompt_fingerprint)
-    ]
-    if dataset_sha256 is not None:
-        variant_rows = variant_rows[variant_rows["dataset_sha256"] == dataset_sha256]
+    variant_rows = quality_frame[quality_frame["run_key"].isin(run_keys)]
     if variant_rows.empty:
         raise ValueError(
-            f"no results for {gate.prompt_version} ({prompt_fingerprint}) on {gate.model_name} "
-            f"with the current answer key: "
+            f"no results for {gate.prompt_version} on {gate.model_name} with the current prompt, "
+            f"answer key and generation settings: "
             f"run `python -m evaluation.run_benchmark {gate.experiment_config.as_posix()}` first"
         )
     return variant_rows
@@ -237,8 +228,7 @@ def main() -> int:
     gate = load_gate_config(parsed_args.gate_config)
     results_path = parsed_args.results or gate.default_results_path()
     variant_rows = select_variant_rows(
-        load_quality_frame(results_path)[0], gate,
-        current_prompt_fingerprint(gate), current_dataset_sha256(gate),
+        load_quality_frame(results_path)[0], gate, planned_run_keys(gate)
     )
 
     if parsed_args.command == "approve":
@@ -260,6 +250,10 @@ def main() -> int:
         gate, baseline, f"{first_row['prompt_version']}@{first_row['manifest_version']} "
         f"({first_row['prompt_fingerprint']})", checks,
     )
+    # Windows writes piped or redirected output in cp1252, which has no ✅/❌: without this, the
+    # gate crashes AFTER judging and exits 1 even when every check passed.
+    if isinstance(sys.stdout, io.TextIOWrapper):
+        sys.stdout.reconfigure(encoding="utf-8")
     print(report)
     if summary_path := os.environ.get("GITHUB_STEP_SUMMARY"):  # shows on the CI run page
         with open(summary_path, "a", encoding="utf-8") as summary_file:

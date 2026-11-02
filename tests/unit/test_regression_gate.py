@@ -43,6 +43,7 @@ def make_rows(wrong=(), missed_escalation=(), missed_critical=(), invalid=(),
             "manifest_version": "2.1.0", "prompt_fingerprint": fingerprint,
             "model_name": "test-model", "completed_at": completed_at,
             "dataset_sha256": dataset_sha256,
+            "run_key": f"{fingerprint}|{dataset_sha256}|{case_id}",
             "expected_urgency": expected_urgency, "expected_escalation": expected_escalation,
             "schema_valid": case_id not in invalid,
             "all_labels_correct": case_id not in (*wrong, *missed_escalation, *missed_critical,
@@ -111,20 +112,24 @@ def test_missing_tickets_fail():
     assert results["all baseline tickets answered"] is False
 
 
-# --- 4. Selecting the rows under test -----------------------------------------------------------
+# --- 4. Selecting the rows under test: only the runs the experiment plans today ------------------
+def run_keys_of(rows: pd.DataFrame) -> set[str]:
+    return set(rows["run_key"])
+
+
 def test_only_the_current_prompt_is_under_test_even_after_a_revert():
     # A bad edit ran AFTER the approved prompt; then the edit was reverted on disk.
     approved_rows = make_rows(fingerprint="fp-approved", completed_at="2026-11-01T10:00:00+00:00")
     reverted_bad_rows = make_rows(wrong=("TT-05", "TT-06"), fingerprint="fp-bad-edit",
                                   completed_at="2026-11-02T10:00:00+00:00")
     selected = select_variant_rows(pd.concat([approved_rows, reverted_bad_rows]), GATE,
-                                   prompt_fingerprint="fp-approved")
+                                   run_keys_of(approved_rows))
     assert set(selected["prompt_fingerprint"]) == {"fp-approved"}
 
 
 def test_missing_results_for_the_current_prompt_say_what_to_run():
     with pytest.raises(ValueError, match="no results for v6_critical_triggers .* run `python -m"):
-        select_variant_rows(make_rows(), GATE, prompt_fingerprint="fp-never-benchmarked")
+        select_variant_rows(make_rows(), GATE, {"a-run-never-benchmarked"})
 
 
 def test_results_from_an_older_answer_key_are_left_out():
@@ -132,24 +137,33 @@ def test_results_from_an_older_answer_key_are_left_out():
     old_key_rows = make_rows(dataset_sha256="old-key-v1xx")
     current_key_rows = make_rows(dataset_sha256="new-key-v2xx", completed_at="2026-11-03")
     selected = select_variant_rows(
-        pd.concat([old_key_rows, current_key_rows]), GATE,
-        prompt_fingerprint="fp-approved", dataset_sha256="new-key-v2xx",
+        pd.concat([old_key_rows, current_key_rows]), GATE, run_keys_of(current_key_rows)
     )
     assert set(selected["dataset_sha256"]) == {"new-key-v2xx"}
     assert len(selected) == len(current_key_rows)
 
 
-def test_current_fingerprint_matches_the_composer():
-    from evaluation.regression_gate import current_prompt_fingerprint
+def test_planned_keys_name_the_current_prompt_answer_key_and_settings():
+    from evaluation.golden_case_model import compute_dataset_sha256
+    from evaluation.regression_gate import planned_run_keys
     from prompt_engine.composer import PromptComposer
     from prompt_engine.registry import PromptRegistry
 
-    gate = load_gate_config(PROJECT_ROOT / "configs" / "gates" / "dev_qwen7b.yaml")
+    gate = load_gate_config(PROJECT_ROOT / "configs" / "gates" / "ci_smoke.yaml")
     registry = PromptRegistry()
     manifest = registry.load_manifest("ticket_triage", "v6_critical_triggers")
     some_ticket = {"customer_tier": "pro", "ticket_subject": "x", "ticket_body": "y"}
-    expected = PromptComposer(registry).compose(manifest, some_ticket).prompt_fingerprint
-    assert current_prompt_fingerprint(gate) == expected
+    fingerprint = PromptComposer(registry).compose(manifest, some_ticket).prompt_fingerprint
+    answer_key = compute_dataset_sha256(
+        PROJECT_ROOT / "evaluation" / "golden_datasets" / "ticket_triage" / "v2.jsonl"
+    )[:12]
+
+    run_keys = planned_run_keys(gate)
+    assert len(run_keys) == 11  # the smoke tickets
+    expected_prefix = (
+        f"v6_critical_triggers|{fingerprint}|{answer_key}|qwen2.5:1.5b|0.0|42|1.0|512|True|2|"
+    )
+    assert all(run_key.startswith(expected_prefix) for run_key in run_keys)
 
 
 @pytest.mark.parametrize("gate_file", sorted((PROJECT_ROOT / "configs" / "gates").glob("*.yaml")))

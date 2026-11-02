@@ -99,6 +99,24 @@ async def test_server_error_is_a_transport_error():
             await client.complete(MESSAGES, GenerationParams(temperature=0.0))
 
 
+@pytest.mark.parametrize("reply_body", [{"error": "no message key"}, ["not", "an", "object"]])
+async def test_reply_without_a_message_is_a_transport_error(reply_body):
+    async with build_client(reply_body=reply_body) as client:
+        with pytest.raises(LLMTransportError, match="unexpected reply from Ollama"):
+            await client.complete(MESSAGES, GenerationParams(temperature=0.0))
+
+
+async def test_non_json_reply_is_a_transport_error():
+    def reply_with_html(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, text="<html>Bad gateway</html>")
+
+    client = OllamaClient("qwen2.5:7b", base_url="http://ollama.test",
+                          transport=httpx.MockTransport(reply_with_html))
+    async with client:
+        with pytest.raises(LLMTransportError, match="unexpected reply from Ollama"):
+            await client.complete(MESSAGES, GenerationParams(temperature=0.0))
+
+
 async def test_unreachable_server_is_a_transport_error():
     def refuse_connection(request: httpx.Request) -> httpx.Response:
         raise httpx.ConnectError("connection refused", request=request)

@@ -25,7 +25,7 @@ from typing import Any
 from evaluation.experiment_config import ExperimentConfig, load_experiment_config
 from evaluation.golden_case_model import GoldenCase, compute_dataset_sha256, load_golden_cases
 from evaluation.metrics import SummarySimilarityScorer, score_case
-from evaluation.results_io import completed_run_keys
+from evaluation.results_io import completed_run_keys, drop_half_written_last_line
 from prompt_engine.clients.base import LLMClient, LLMTransportError
 from prompt_engine.clients.ollama_client import OllamaClient
 from prompt_engine.composer import ComposedPrompt, PromptComposer
@@ -53,10 +53,11 @@ class PlannedRun:
 
 
 # The key names everything that can change an answer. Editing a prompt changes its fingerprint,
-# editing the dataset changes its hash: both produce NEW keys, so stale rows are never reused.
+# editing the dataset changes its hash, editing a manifest's generation settings changes top_p or
+# max_output_tokens: all produce NEW keys, so stale rows are never reused.
 RUN_KEY_FIELDS = (
     "prompt_version", "prompt_fingerprint", "dataset_sha256", "model_name", "temperature",
-    "seed", "constrained_decoding", "max_repair_attempts",
+    "seed", "top_p", "max_output_tokens", "constrained_decoding", "max_repair_attempts",
 )
 
 
@@ -96,6 +97,10 @@ def plan_runs(
                                 "model_name": model_name,
                                 "temperature": temperature,
                                 "seed": seed,
+                                "top_p": composed_prompt.generation_params.top_p,
+                                "max_output_tokens": (
+                                    composed_prompt.generation_params.max_output_tokens
+                                ),
                                 "constrained_decoding": use_constrained_decoding,
                                 "max_repair_attempts": config.max_repair_attempts,
                             }
@@ -166,6 +171,7 @@ async def run_experiment(
     results_dir = results_dir or get_settings().results_dir
     results_dir.mkdir(parents=True, exist_ok=True)
     results_path = results_dir / f"{config.experiment_id}.jsonl"
+    drop_half_written_last_line(results_path)  # left by a run killed mid-write
     already_done = completed_run_keys(results_path)
     total_runs = sum(len(runs) for runs in runs_by_model.values())
     print(f"{config.experiment_id}: {total_runs} runs planned, "

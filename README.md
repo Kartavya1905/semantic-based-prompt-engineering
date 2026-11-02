@@ -79,8 +79,9 @@ python -m evaluation.run_benchmark configs/experiments/smoke.yaml
 python -m evaluation.summarize_results evaluation/results/smoke.jsonl --by-slice
 ```
 
-Experiments: `smoke` (33 runs, ~1 min), `constrained_decoding_ablation` (216 runs, ~6 min),
-`dev_temperature_sweep` (2,160 runs, ~1–1.5 h). Rerun the same command to resume after a stop.
+Experiments (on answer key v2): `smoke` (33 runs, ~1 min), `gate_dev_qwen7b` (108 runs, ~5 min),
+`constrained_decoding_ablation` (648 runs, ~20 min), `dev_v2_comparison` (648 runs, ~35 min),
+`dev_temperature_sweep` (6,480 runs, ~4 h). Rerun the same command to resume after a stop.
 
 ### Statistical report (Phase 7)
 
@@ -105,8 +106,9 @@ python -m evaluation.regression_gate check configs/gates/dev_qwen7b.yaml
 
 The gate compares ticket by ticket against `evaluation/baselines/<gate>.json` and fails (exit 1)
 on more net regressions than allowed, **any** newly missed escalation or critical ticket, a
-schema-validity drop, or a changed answer key. It always judges the prompt as it is on disk
-(by fingerprint). After an intended improvement, approve the new baseline and commit it:
+schema-validity drop, or a changed answer key. It only judges results of the runs its experiment
+would make right now (same prompt files, answer key and generation settings), so stale results
+are never checked. After an intended improvement, approve the new baseline and commit it:
 `python -m evaluation.regression_gate approve configs/gates/dev_qwen7b.yaml`.
 
 CI (`.github/workflows/prompt-ci.yml`) runs lint, types, tests, snapshot and answer-key checks on

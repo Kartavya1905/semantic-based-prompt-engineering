@@ -1,7 +1,8 @@
 # =============================================================================
 # FILE:         configs/models.yaml
-# WHAT IT DOES: Registry of models experiments may reference by name.
-# WHERE IT FITS: Experiment configs list model_names; the runner looks them up here.
+# WHAT IT DOES: Reference list of the models this project uses, with their sizes and roles.
+# WHERE IT FITS: Documentation only: no code reads this file. Experiment configs name models
+#               directly (model_names), and the runner passes the name to Ollama as is.
 # COST:         all entries are local Ollama models — free.
 # =============================================================================
 models:
