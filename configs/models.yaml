@@ -1,0 +1,22 @@
+# =============================================================================
+# FILE:         configs/models.yaml
+# WHAT IT DOES: Registry of models experiments may reference by name.
+# WHERE IT FITS: Experiment configs list model_names; the runner looks them up here.
+# COST:         all entries are local Ollama models — free.
+# =============================================================================
+models:
+  qwen2.5:7b:
+    backend: ollama
+    context_window_tokens: 32768
+    approx_size_gb: 4.7
+    role: primary experiment model (fits an 8 GB GPU)
+  llama3.1:8b:
+    backend: ollama
+    context_window_tokens: 131072
+    approx_size_gb: 4.9
+    role: second model family, for cross-model comparison
+  qwen2.5:1.5b:
+    backend: ollama
+    context_window_tokens: 32768
+    approx_size_gb: 1.0
+    role: CI smoke canary (fast; structural breakage only)

@@ -1,0 +1,19 @@
+# =============================================================================
+# FILE:         configs/experiments/critical_fix.yaml
+# WHAT IT DOES: Does spelling out "critical" (v4) or showing a critical example (v5) fix the
+#               under-triage found in dev_temperature_sweep? v3 is re-run as the control.
+# DESIGN:       T=0 only (the sweep showed temperature barely matters). Both models, so a fix
+#               that only works for one model family is visible. Dev split only: the test split
+#               stays untouched until a winner is chosen.
+# SIZE:         3 variants × 2 models × 36 cases = 216 runs (~10 minutes)
+# =============================================================================
+experiment_id: critical_fix
+description: v3 (control) vs v4 explicit critical policy vs v5 plus a critical example, on dev.
+prompt_id: ticket_triage
+prompt_versions: [v3_fewshot, v4_explicit_critical, v5_critical_example]
+model_names: ["qwen2.5:7b", "llama3.1:8b"]
+temperatures: [0.0]
+seeds: [42]
+dataset_path: evaluation/golden_datasets/ticket_triage/v1.jsonl
+dataset_split: dev
+max_concurrency: 2

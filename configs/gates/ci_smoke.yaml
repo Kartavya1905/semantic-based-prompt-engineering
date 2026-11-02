@@ -1,0 +1,20 @@
+# =============================================================================
+# FILE:         configs/gates/ci_smoke.yaml
+# WHAT IT DOES: The gate every pull request must pass in GitHub Actions.
+# MODEL:        qwen2.5:1.5b on a CPU runner: a canary for prompt changes that BREAK things
+#               (bad JSON, a rule that stops firing), not a judge of overall quality.
+# TOLERANCE:    The baseline was approved on a local GPU and CI runs on a CPU, so greedy answers
+#               can differ slightly. Hence 1 net regression and 1 escalation flip are tolerated.
+#               If CI flakes, re-approve from a CI results artifact:
+#               python -m evaluation.regression_gate approve configs/gates/ci_smoke.yaml --results <file>
+# BASELINE:     evaluation/baselines/ci_smoke.json (approved 2026-11-02: all labels 0.36, valid 0.91)
+# =============================================================================
+gate_id: ci_smoke
+description: Production variant on the 11 smoke tickets with qwen2.5:1.5b.
+experiment_config: configs/experiments/ci_smoke.yaml
+prompt_version: v6_critical_triggers
+model_name: "qwen2.5:1.5b"
+min_schema_valid_rate: 0.8
+max_net_regressions: 1
+max_new_missed_escalations: 1
+max_new_missed_critical: 0

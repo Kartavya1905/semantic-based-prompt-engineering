@@ -1,0 +1,20 @@
+{#
+  FILE:         prompts/templates/ticket_triage/user_message.j2
+  WHAT IT DOES: The human turn. The ONLY place where per-ticket data enters the prompt.
+  RULES:        Every variable passes through | xml_safe, so a ticket containing "</ticket>"
+                cannot break out of its data boundary (tests/unit/test_prompt_assets.py checks this).
+                Variables must match required_variables in every manifest that uses this file.
+#}
+<task>
+Triage the support ticket below by following <policies> and <output_contract>.
+</task>
+
+<ticket>
+<customer_tier>{{ customer_tier | xml_safe }}</customer_tier>
+<subject>{{ ticket_subject | xml_safe }}</subject>
+<body>
+{{ ticket_body | xml_safe }}
+</body>
+</ticket>
+
+Reply with one JSON object that matches <output_schema>.

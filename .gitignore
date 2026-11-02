@@ -1,0 +1,28 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+dist/
+
+# --- Tool caches ---
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# --- Local settings (copy .env.example → .env) ---
+.env
+
+# --- Benchmark raw run logs (large, regenerable); keep the folder itself ---
+evaluation/results/*
+!evaluation/results/.gitkeep
+
+# --- Embedding model downloads ---
+.cache/
+
+# --- Editors / OS ---
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

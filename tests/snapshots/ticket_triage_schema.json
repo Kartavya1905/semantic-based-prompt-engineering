@@ -1,0 +1,108 @@
+{
+  "$defs": {
+    "EntityType": {
+      "enum": [
+        "product",
+        "order_id",
+        "invoice_id",
+        "error_code"
+      ],
+      "title": "EntityType",
+      "type": "string"
+    },
+    "ExtractedEntity": {
+      "additionalProperties": false,
+      "properties": {
+        "entity_type": {
+          "$ref": "#/$defs/EntityType",
+          "description": "Kind of identifier."
+        },
+        "entity_value": {
+          "description": "The identifier exactly as written in the ticket. Never invented.",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Entity Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entity_type",
+        "entity_value"
+      ],
+      "title": "ExtractedEntity",
+      "type": "object"
+    },
+    "TicketCategory": {
+      "enum": [
+        "billing",
+        "technical",
+        "account",
+        "feature_request",
+        "other"
+      ],
+      "title": "TicketCategory",
+      "type": "string"
+    },
+    "UrgencyLevel": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "UrgencyLevel",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Structured triage decision for one customer support ticket.",
+  "properties": {
+    "summary": {
+      "description": "One third-person sentence stating the issue, with concrete identifiers.",
+      "maxLength": 280,
+      "minLength": 10,
+      "title": "Summary",
+      "type": "string"
+    },
+    "extracted_entities": {
+      "description": "Identifiers literally present in the ticket; empty list if none.",
+      "items": {
+        "$ref": "#/$defs/ExtractedEntity"
+      },
+      "maxItems": 10,
+      "title": "Extracted Entities",
+      "type": "array"
+    },
+    "category": {
+      "$ref": "#/$defs/TicketCategory",
+      "description": "The single dominant issue type."
+    },
+    "urgency": {
+      "$ref": "#/$defs/UrgencyLevel",
+      "description": "Business impact and time sensitivity."
+    },
+    "requires_human_escalation": {
+      "description": "True if a human must review before any automated response.",
+      "title": "Requires Human Escalation",
+      "type": "boolean"
+    },
+    "confidence_score": {
+      "description": "Calibrated probability that category AND urgency are both correct.",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence Score",
+      "type": "number"
+    }
+  },
+  "required": [
+    "summary",
+    "extracted_entities",
+    "category",
+    "urgency",
+    "requires_human_escalation",
+    "confidence_score"
+  ],
+  "title": "TicketTriageResult",
+  "type": "object",
+  "x-schema-version": "1.0.0"
+}

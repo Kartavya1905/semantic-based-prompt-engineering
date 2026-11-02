@@ -1,0 +1,93 @@
+{
+  "gate_id": "ci_smoke",
+  "approved_at": "2026-11-02T08:21:45+00:00",
+  "approved_variant": "v6_critical_triggers@2.1.0",
+  "prompt_fingerprint": "545ac67570ce",
+  "model_name": "qwen2.5:1.5b",
+  "dataset_sha256": "fa52bab0aed3",
+  "metrics": {
+    "tickets": 11,
+    "schema_valid_rate": 0.909,
+    "all_labels_accuracy": 0.364,
+    "urgency_accuracy": 0.545
+  },
+  "cases": {
+    "TT-0001": {
+      "all_labels_correct": false,
+      "urgency_correct": false,
+      "escalation_correct": true,
+      "expected_urgency": "high",
+      "expected_escalation": false
+    },
+    "TT-0002": {
+      "all_labels_correct": false,
+      "urgency_correct": false,
+      "escalation_correct": true,
+      "expected_urgency": "medium",
+      "expected_escalation": false
+    },
+    "TT-0003": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "critical",
+      "expected_escalation": true
+    },
+    "TT-0004": {
+      "all_labels_correct": false,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "low",
+      "expected_escalation": false
+    },
+    "TT-0005": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "low",
+      "expected_escalation": false
+    },
+    "TT-0006": {
+      "all_labels_correct": false,
+      "urgency_correct": false,
+      "escalation_correct": false,
+      "expected_urgency": "high",
+      "expected_escalation": true
+    },
+    "TT-0008": {
+      "all_labels_correct": false,
+      "urgency_correct": true,
+      "escalation_correct": false,
+      "expected_urgency": "low",
+      "expected_escalation": true
+    },
+    "TT-0010": {
+      "all_labels_correct": false,
+      "urgency_correct": false,
+      "escalation_correct": false,
+      "expected_urgency": "low",
+      "expected_escalation": false
+    },
+    "TT-0012": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "critical",
+      "expected_escalation": true
+    },
+    "TT-0016": {
+      "all_labels_correct": false,
+      "urgency_correct": false,
+      "escalation_correct": true,
+      "expected_urgency": "high",
+      "expected_escalation": false
+    },
+    "TT-0031": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "critical",
+      "expected_escalation": true
+    }
+  }
+}

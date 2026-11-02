@@ -1,0 +1,38 @@
+# =============================================================================
+# FILE:         prompts/manifests/ticket_triage/v5_critical_example.yaml
+# WHAT IT DOES: v4_explicit_critical plus a fourth worked example: a calmly written security
+#               exposure answered as critical (FS-004).
+# HYPOTHESIS:   Showing one critical answer helps more than describing it: the three v3
+#               examples are high, low and medium, so the model has never SEEN "critical".
+#               Only few_shot differs from v4.
+# =============================================================================
+prompt_id: ticket_triage
+version: 1.0.1
+description: v4 plus a critical security few-shot example. Tests showing vs telling.
+
+system_components:
+  - component_id: persona
+    source_path: system/personas/support_triage_analyst.md
+    xml_tag: role
+  - component_id: policy
+    source_path: system/policies/escalation_policy_explicit_critical.md
+    xml_tag: policies
+  - component_id: contract
+    source_path: system/output_contracts/ticket_triage_contract.md
+    xml_tag: output_contract
+
+human_template:
+  source_path: templates/ticket_triage/user_message.j2
+  required_variables: [customer_tier, ticket_subject, ticket_body]
+
+few_shot:
+  source_path: fragments/ticket_triage/examples_with_critical.yaml
+  max_examples: 4
+
+output_schema_ref: "prompt_engine.schemas.ticket_triage:TicketTriageResult"
+
+default_generation:
+  temperature: 0.0
+  top_p: 1.0
+  seed: 42
+  max_output_tokens: 512

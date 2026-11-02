@@ -1,0 +1,17 @@
+# =============================================================================
+# FILE:         configs/experiments/smoke.yaml
+# WHAT IT DOES: Fast sanity run: every prompt variant on the 11 smoke cases, greedy decoding.
+# SIZE:         3 variants × 1 model × 1 temperature × 11 cases = 33 runs (~1 minute)
+# USE:          python -m evaluation.run_benchmark configs/experiments/smoke.yaml
+# =============================================================================
+experiment_id: smoke
+description: All variants on the smoke subset with qwen2.5:7b at temperature 0.
+prompt_id: ticket_triage
+prompt_versions: [v1_baseline, v2_policy_first, v3_fewshot]
+model_names: ["qwen2.5:7b"]
+temperatures: [0.0]
+seeds: [42]
+dataset_path: evaluation/golden_datasets/ticket_triage/v1.jsonl
+dataset_split: dev
+required_tag: smoke
+max_concurrency: 2

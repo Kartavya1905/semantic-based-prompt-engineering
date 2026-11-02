@@ -1,0 +1,19 @@
+# =============================================================================
+# FILE:         configs/experiments/ci_smoke.yaml
+# WHAT IT DOES: The experiment CI runs on every pull request: the production variant on the
+#               11 smoke tickets with the small qwen2.5:1.5b model (CI machines have no GPU).
+# SIZE:         1 variant × 1 model × 11 cases = 11 runs (a few minutes on a CPU runner)
+# GATE:         configs/gates/ci_smoke.yaml
+# =============================================================================
+experiment_id: ci_smoke
+description: Production variant on the smoke subset with the CI canary model, greedy decoding.
+prompt_id: ticket_triage
+prompt_versions: [v6_critical_triggers]
+model_names: ["qwen2.5:1.5b"]
+temperatures: [0.0]
+seeds: [42]
+dataset_path: evaluation/golden_datasets/ticket_triage/v1.jsonl
+dataset_split: dev
+required_tag: smoke
+max_concurrency: 1
+compute_summary_similarity: false

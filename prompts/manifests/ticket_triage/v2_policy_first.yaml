@@ -1,0 +1,34 @@
+# =============================================================================
+# FILE:         prompts/manifests/ticket_triage/v2_policy_first.yaml
+# WHAT IT DOES: Same components as v1_baseline, policies moved to the top.
+# HYPOTHESIS:   Rules placed first are followed more reliably (higher escalation recall,
+#               better resistance to injected instructions). Only the ORDER differs from v1.
+# =============================================================================
+prompt_id: ticket_triage
+version: 1.0.0
+description: Policy-first ordering. Tests whether rule position changes escalation recall.
+
+system_components:
+  - component_id: policy
+    source_path: system/policies/escalation_policy.md
+    xml_tag: policies
+  - component_id: persona
+    source_path: system/personas/support_triage_analyst.md
+    xml_tag: role
+  - component_id: contract
+    source_path: system/output_contracts/ticket_triage_contract.md
+    xml_tag: output_contract
+
+human_template:
+  source_path: templates/ticket_triage/user_message.j2
+  required_variables: [customer_tier, ticket_subject, ticket_body]
+
+few_shot: null
+
+output_schema_ref: "prompt_engine.schemas.ticket_triage:TicketTriageResult"
+
+default_generation:
+  temperature: 0.0
+  top_p: 1.0
+  seed: 42
+  max_output_tokens: 512

@@ -1,0 +1,45 @@
+# =============================================================================
+# FILE:         prompts/manifests/ticket_triage/v6_critical_triggers.yaml
+# WHAT IT DOES: v5_critical_example with the v2 output contract: the model answers three
+#               factual trigger questions, and code applies urgency rule 1.
+# WHY:          qwen2.5:7b caught 0/5 critical dev tickets with v3, v4 and v5 alike, and only
+#               ever said "critical" when a ticket told it to (critical_fix, 2026-11-02).
+# HYPOTHESIS:   Asking "was data lost / exposed / fully down?" works where asking "how urgent?"
+#               fails. Bonus: "critical" with no trigger is rejected, so injected demands for
+#               critical go through the repair loop instead of being trusted.
+#               Differs from v5 only in the output contract (and the examples' matching trigger
+#               answers). MAJOR version 2 because the schema changed.
+# CHANGES:      2.1.0 (2026-11-02): full_outage_reported and the policy's outage bullet narrowed
+#               to a WHOLE service/product/endpoint (2.0.0 flagged one broken function as an
+#               outage on TT-0006 and TT-0007 with both models).
+# =============================================================================
+prompt_id: ticket_triage
+version: 2.1.0
+description: v5 with the v2 contract (critical triggers + rule 1 in code). Tests decomposition.
+
+system_components:
+  - component_id: persona
+    source_path: system/personas/support_triage_analyst.md
+    xml_tag: role
+  - component_id: policy
+    source_path: system/policies/escalation_policy_explicit_critical.md
+    xml_tag: policies
+  - component_id: contract
+    source_path: system/output_contracts/ticket_triage_contract.md
+    xml_tag: output_contract
+
+human_template:
+  source_path: templates/ticket_triage/user_message.j2
+  required_variables: [customer_tier, ticket_subject, ticket_body]
+
+few_shot:
+  source_path: fragments/ticket_triage/examples_with_triggers.yaml
+  max_examples: 4
+
+output_schema_ref: "prompt_engine.schemas.ticket_triage_with_triggers:TicketTriageWithTriggers"
+
+default_generation:
+  temperature: 0.0
+  top_p: 1.0
+  seed: 42
+  max_output_tokens: 512

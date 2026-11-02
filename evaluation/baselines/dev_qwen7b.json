@@ -1,0 +1,268 @@
+{
+  "gate_id": "dev_qwen7b",
+  "approved_at": "2026-11-02T08:21:48+00:00",
+  "approved_variant": "v6_critical_triggers@2.1.0",
+  "prompt_fingerprint": "545ac67570ce",
+  "model_name": "qwen2.5:7b",
+  "dataset_sha256": "fa52bab0aed3",
+  "metrics": {
+    "tickets": 36,
+    "schema_valid_rate": 0.972,
+    "all_labels_accuracy": 0.556,
+    "urgency_accuracy": 0.778
+  },
+  "cases": {
+    "TT-0001": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "high",
+      "expected_escalation": false
+    },
+    "TT-0002": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "medium",
+      "expected_escalation": false
+    },
+    "TT-0003": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "critical",
+      "expected_escalation": true
+    },
+    "TT-0004": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "low",
+      "expected_escalation": false
+    },
+    "TT-0005": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "low",
+      "expected_escalation": false
+    },
+    "TT-0006": {
+      "all_labels_correct": false,
+      "urgency_correct": false,
+      "escalation_correct": true,
+      "expected_urgency": "high",
+      "expected_escalation": true
+    },
+    "TT-0007": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "high",
+      "expected_escalation": false
+    },
+    "TT-0008": {
+      "all_labels_correct": false,
+      "urgency_correct": true,
+      "escalation_correct": false,
+      "expected_urgency": "low",
+      "expected_escalation": true
+    },
+    "TT-0009": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "high",
+      "expected_escalation": true
+    },
+    "TT-0010": {
+      "all_labels_correct": false,
+      "urgency_correct": false,
+      "escalation_correct": false,
+      "expected_urgency": "low",
+      "expected_escalation": false
+    },
+    "TT-0011": {
+      "all_labels_correct": false,
+      "urgency_correct": false,
+      "escalation_correct": true,
+      "expected_urgency": "low",
+      "expected_escalation": false
+    },
+    "TT-0012": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "critical",
+      "expected_escalation": true
+    },
+    "TT-0013": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "critical",
+      "expected_escalation": true
+    },
+    "TT-0014": {
+      "all_labels_correct": false,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "medium",
+      "expected_escalation": false
+    },
+    "TT-0015": {
+      "all_labels_correct": false,
+      "urgency_correct": false,
+      "escalation_correct": true,
+      "expected_urgency": "medium",
+      "expected_escalation": false
+    },
+    "TT-0016": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "high",
+      "expected_escalation": false
+    },
+    "TT-0017": {
+      "all_labels_correct": false,
+      "urgency_correct": false,
+      "escalation_correct": true,
+      "expected_urgency": "medium",
+      "expected_escalation": false
+    },
+    "TT-0018": {
+      "all_labels_correct": false,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "low",
+      "expected_escalation": false
+    },
+    "TT-0019": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "low",
+      "expected_escalation": false
+    },
+    "TT-0020": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "low",
+      "expected_escalation": false
+    },
+    "TT-0021": {
+      "all_labels_correct": false,
+      "urgency_correct": true,
+      "escalation_correct": false,
+      "expected_urgency": "high",
+      "expected_escalation": true
+    },
+    "TT-0022": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "high",
+      "expected_escalation": false
+    },
+    "TT-0023": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "low",
+      "expected_escalation": false
+    },
+    "TT-0024": {
+      "all_labels_correct": false,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "medium",
+      "expected_escalation": false
+    },
+    "TT-0025": {
+      "all_labels_correct": false,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "critical",
+      "expected_escalation": true
+    },
+    "TT-0026": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "low",
+      "expected_escalation": false
+    },
+    "TT-0027": {
+      "all_labels_correct": false,
+      "urgency_correct": false,
+      "escalation_correct": true,
+      "expected_urgency": "low",
+      "expected_escalation": false
+    },
+    "TT-0028": {
+      "all_labels_correct": false,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "low",
+      "expected_escalation": false
+    },
+    "TT-0029": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "low",
+      "expected_escalation": false
+    },
+    "TT-0030": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "high",
+      "expected_escalation": true
+    },
+    "TT-0031": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "critical",
+      "expected_escalation": true
+    },
+    "TT-0032": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "low",
+      "expected_escalation": false
+    },
+    "TT-0033": {
+      "all_labels_correct": false,
+      "urgency_correct": false,
+      "escalation_correct": true,
+      "expected_urgency": "medium",
+      "expected_escalation": false
+    },
+    "TT-0034": {
+      "all_labels_correct": false,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "medium",
+      "expected_escalation": false
+    },
+    "TT-0035": {
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
+      "expected_urgency": "medium",
+      "expected_escalation": false
+    },
+    "TT-0036": {
+      "all_labels_correct": false,
+      "urgency_correct": false,
+      "escalation_correct": false,
+      "expected_urgency": "low",
+      "expected_escalation": true
+    }
+  }
+}

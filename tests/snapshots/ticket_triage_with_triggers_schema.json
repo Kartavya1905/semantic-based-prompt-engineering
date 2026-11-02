@@ -1,0 +1,126 @@
+{
+  "$defs": {
+    "EntityType": {
+      "enum": [
+        "product",
+        "order_id",
+        "invoice_id",
+        "error_code"
+      ],
+      "title": "EntityType",
+      "type": "string"
+    },
+    "ExtractedEntity": {
+      "additionalProperties": false,
+      "properties": {
+        "entity_type": {
+          "$ref": "#/$defs/EntityType",
+          "description": "Kind of identifier."
+        },
+        "entity_value": {
+          "description": "The identifier exactly as written in the ticket. Never invented.",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Entity Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entity_type",
+        "entity_value"
+      ],
+      "title": "ExtractedEntity",
+      "type": "object"
+    },
+    "TicketCategory": {
+      "enum": [
+        "billing",
+        "technical",
+        "account",
+        "feature_request",
+        "other"
+      ],
+      "title": "TicketCategory",
+      "type": "string"
+    },
+    "UrgencyLevel": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "UrgencyLevel",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Triage decision where critical urgency is derived from three reported facts.",
+  "properties": {
+    "summary": {
+      "description": "One third-person sentence stating the issue, with concrete identifiers.",
+      "maxLength": 280,
+      "minLength": 10,
+      "title": "Summary",
+      "type": "string"
+    },
+    "extracted_entities": {
+      "description": "Identifiers literally present in the ticket; empty list if none.",
+      "items": {
+        "$ref": "#/$defs/ExtractedEntity"
+      },
+      "maxItems": 10,
+      "title": "Extracted Entities",
+      "type": "array"
+    },
+    "data_loss_reported": {
+      "description": "True if the ticket reports records, files or history deleted, overwritten or missing.",
+      "title": "Data Loss Reported",
+      "type": "boolean"
+    },
+    "security_exposure_reported": {
+      "description": "True if passwords, keys or tokens were shown or leaked, data was visible to people who should not see it, or someone accessed an account without authorisation.",
+      "title": "Security Exposure Reported",
+      "type": "boolean"
+    },
+    "full_outage_reported": {
+      "description": "True only if a WHOLE production service, product or API endpoint is unavailable: nothing loads, or every call fails. False if one function fails while the rest of the product still works.",
+      "title": "Full Outage Reported",
+      "type": "boolean"
+    },
+    "category": {
+      "$ref": "#/$defs/TicketCategory",
+      "description": "The single dominant issue type."
+    },
+    "urgency": {
+      "$ref": "#/$defs/UrgencyLevel",
+      "description": "Business impact. Must be critical if any *_reported field is true, and only then."
+    },
+    "requires_human_escalation": {
+      "description": "True if a human must review before any automated response.",
+      "title": "Requires Human Escalation",
+      "type": "boolean"
+    },
+    "confidence_score": {
+      "description": "Calibrated probability that category AND urgency are both correct.",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence Score",
+      "type": "number"
+    }
+  },
+  "required": [
+    "summary",
+    "extracted_entities",
+    "data_loss_reported",
+    "security_exposure_reported",
+    "full_outage_reported",
+    "category",
+    "urgency",
+    "requires_human_escalation",
+    "confidence_score"
+  ],
+  "title": "TicketTriageWithTriggers",
+  "type": "object",
+  "x-schema-version": "2.1.0"
+}
