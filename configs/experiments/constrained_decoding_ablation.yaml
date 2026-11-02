@@ -3,7 +3,7 @@
 # WHAT IT DOES: How much do the guardrails buy? Same prompts with and without constrained
 #               decoding (the JSON Schema sent as Ollama's "format"), and with no repair retries,
 #               so first-pass and final validity show the raw prompt-only behaviour.
-# SIZE:         3 variants × 2 modes × 36 cases = 216 runs (~6 minutes)
+# SIZE:         3 variants × 2 modes × 108 cases = 648 runs (~20 minutes)
 # =============================================================================
 experiment_id: constrained_decoding_ablation
 description: Constrained decoding on vs off, no repairs, qwen2.5:7b at temperature 0 on dev.
@@ -13,7 +13,7 @@ model_names: ["qwen2.5:7b"]
 temperatures: [0.0]
 seeds: [42]
 constrained_decoding_modes: [true, false]
-dataset_path: evaluation/golden_datasets/ticket_triage/v1.jsonl
+dataset_path: evaluation/golden_datasets/ticket_triage/v2.jsonl
 dataset_split: dev
 max_repair_attempts: 0
 max_concurrency: 2

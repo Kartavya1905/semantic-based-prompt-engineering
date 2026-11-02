@@ -1,0 +1,21 @@
+# =============================================================================
+# FILE:         configs/experiments/dev_v2_comparison.yaml
+# WHAT IT DOES: The confirmation run on the larger answer key (v2, 108 dev tickets, 20 critical):
+#               v3 (best plain prompt) vs v5 (prompt-level critical fix) vs v6 (critical
+#               triggers + rule 1 in code), on both model families.
+# WHY:          On v1 (36 dev tickets) none of these differences could be confirmed; v2 is
+#               sized to detect ~15-point gains and to make critical recall testable.
+# DESIGN:       T=0 (temperature barely mattered in dev_temperature_sweep). Dev split only;
+#               the held-out test split stays untouched.
+# SIZE:         3 variants × 2 models × 108 cases = 648 runs (~35 minutes)
+# =============================================================================
+experiment_id: dev_v2_comparison
+description: v3 vs v5 vs v6 on the v2 dev split with qwen2.5:7b and llama3.1:8b.
+prompt_id: ticket_triage
+prompt_versions: [v3_fewshot, v5_critical_example, v6_critical_triggers]
+model_names: ["qwen2.5:7b", "llama3.1:8b"]
+temperatures: [0.0]
+seeds: [42]
+dataset_path: evaluation/golden_datasets/ticket_triage/v2.jsonl
+dataset_split: dev
+max_concurrency: 2

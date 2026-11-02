@@ -12,7 +12,7 @@ prompt_versions: [v6_critical_triggers]
 model_names: ["qwen2.5:1.5b"]
 temperatures: [0.0]
 seeds: [42]
-dataset_path: evaluation/golden_datasets/ticket_triage/v1.jsonl
+dataset_path: evaluation/golden_datasets/ticket_triage/v2.jsonl
 dataset_split: dev
 required_tag: smoke
 max_concurrency: 1

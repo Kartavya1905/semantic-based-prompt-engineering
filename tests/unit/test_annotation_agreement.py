@@ -19,7 +19,7 @@ from evaluation.annotation_agreement import (
 from evaluation.golden_case_model import load_golden_cases
 from prompt_engine.settings import PROJECT_ROOT
 
-DATASET_PATH = PROJECT_ROOT / "evaluation" / "golden_datasets" / "ticket_triage" / "v1.jsonl"
+DATASET_PATH = PROJECT_ROOT / "evaluation" / "golden_datasets" / "ticket_triage" / "v2.jsonl"
 
 
 @pytest.fixture(scope="module")
@@ -84,7 +84,7 @@ def test_disagreements_are_listed_and_lower_kappa(dev_cases):
         ("TT-0012", "urgency", "critical", "high"),
     ]
     urgency_agreement = next(a for a in field_agreements if a.field_name == "urgency")
-    assert urgency_agreement.percent_agreement == pytest.approx(35 / 36)
+    assert urgency_agreement.percent_agreement == pytest.approx(107 / 108)
     assert urgency_agreement.cohen_kappa is not None and urgency_agreement.cohen_kappa < 1.0
 
 

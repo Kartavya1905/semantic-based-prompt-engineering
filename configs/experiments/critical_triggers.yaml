@@ -3,7 +3,7 @@
 # WHAT IT DOES: Structural fix vs prompt fix: v6 (trigger questions + rule 1 in code) against
 #               its parent v5 (explicit policy + critical example), on both models.
 # DESIGN:       T=0, dev split only; the held-out test split stays untouched.
-# SIZE:         2 variants × 2 models × 36 cases = 144 runs (~7 minutes)
+# SIZE:         2 variants × 2 models × 108 cases = 432 runs (~20 minutes)
 # =============================================================================
 experiment_id: critical_triggers
 description: v5 (prompt-level critical fix) vs v6 (decomposed critical triggers) on dev.
@@ -12,6 +12,6 @@ prompt_versions: [v5_critical_example, v6_critical_triggers]
 model_names: ["qwen2.5:7b", "llama3.1:8b"]
 temperatures: [0.0]
 seeds: [42]
-dataset_path: evaluation/golden_datasets/ticket_triage/v1.jsonl
+dataset_path: evaluation/golden_datasets/ticket_triage/v2.jsonl
 dataset_split: dev
 max_concurrency: 2

@@ -26,8 +26,8 @@ from prompt_engine.schemas.ticket_triage import TicketCategory, TicketTriageResu
 from prompt_engine.settings import PROJECT_ROOT
 
 DATASET_DIR = PROJECT_ROOT / "evaluation" / "golden_datasets" / "ticket_triage"
-DATASET_PATH = DATASET_DIR / "v1.jsonl"
-MANIFEST_PATH = DATASET_DIR / "v1.manifest.json"
+DATASET_PATH = DATASET_DIR / "v2.jsonl"
+MANIFEST_PATH = DATASET_DIR / "v2.manifest.json"
 KEY_SLICES = {"prompt_injection", "non_english", "security", "legal_or_deletion",
               "missing_info", "multi_issue", "very_long", "rule_order", "ambiguous"}
 
@@ -163,7 +163,7 @@ def test_duplicate_case_id_is_rejected(tmp_path, valid_record):
 
 
 def test_mixed_versions_are_rejected(tmp_path, valid_record):
-    second_record = valid_record | {"case_id": "TT-9999", "dataset_version": "2.0.0"}
+    second_record = valid_record | {"case_id": "TT-9999", "dataset_version": "9.9.9"}
     with pytest.raises(GoldenDatasetError, match="mixed dataset_version"):
         load_golden_cases(write_dataset(tmp_path, [valid_record, second_record]))
 

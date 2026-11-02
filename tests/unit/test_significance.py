@@ -27,7 +27,7 @@ from evaluation.significance import (
 from prompt_engine.settings import PROJECT_ROOT
 from tests.fakes import OracleLLMClient
 
-DATASET_PATH = PROJECT_ROOT / "evaluation" / "golden_datasets" / "ticket_triage" / "v1.jsonl"
+DATASET_PATH = PROJECT_ROOT / "evaluation" / "golden_datasets" / "ticket_triage" / "v2.jsonl"
 
 
 def case_frame(scores_by_case: dict[str, list[float]], metric: str = "correct") -> pd.DataFrame:

@@ -1,8 +1,8 @@
 # =============================================================================
 # FILE:         configs/experiments/gate_dev_qwen7b.yaml
-# WHAT IT DOES: The local pre-merge gate experiment: the production variant on all 36 dev
+# WHAT IT DOES: The local pre-merge gate experiment: the production variant on all 108 dev
 #               tickets with qwen2.5:7b on the GPU. Stricter than CI, run before merging.
-# SIZE:         36 runs (~2 minutes on an 8 GB GPU)
+# SIZE:         108 runs (~5 minutes on an 8 GB GPU)
 # GATE:         configs/gates/dev_qwen7b.yaml
 # =============================================================================
 experiment_id: gate_dev_qwen7b
@@ -12,7 +12,7 @@ prompt_versions: [v6_critical_triggers]
 model_names: ["qwen2.5:7b"]
 temperatures: [0.0]
 seeds: [42]
-dataset_path: evaluation/golden_datasets/ticket_triage/v1.jsonl
+dataset_path: evaluation/golden_datasets/ticket_triage/v2.jsonl
 dataset_split: dev
 max_concurrency: 2
 compute_summary_similarity: false

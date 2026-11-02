@@ -19,7 +19,7 @@ from prompt_engine.registry import PromptRegistry
 from prompt_engine.settings import PROJECT_ROOT, get_settings
 from tests.fakes import OracleLLMClient
 
-DATASET_PATH = PROJECT_ROOT / "evaluation" / "golden_datasets" / "ticket_triage" / "v1.jsonl"
+DATASET_PATH = PROJECT_ROOT / "evaluation" / "golden_datasets" / "ticket_triage" / "v2.jsonl"
 SMOKE_CASE_COUNT = 11
 
 
@@ -164,7 +164,7 @@ async def test_models_run_one_after_another(tmp_path, answers_by_body):
 def test_empty_filter_is_an_error():
     import asyncio
 
-    config = build_config(required_tag="policy_gap", dataset_split="test")
+    config = build_config(required_tag="smoke", dataset_split="test")  # smoke is dev-only
     with pytest.raises(ValueError, match="selected no cases"):
         asyncio.run(run_experiment(config, lambda name: OracleLLMClient({})))
 

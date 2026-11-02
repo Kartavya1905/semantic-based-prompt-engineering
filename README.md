@@ -122,7 +122,18 @@ with `qwen2.5:1.5b` on the runner's CPU.
 | 2 | Modular system components, template, few-shots and 3 manifests | Done |
 | 3 | Registry, composer and `scripts/render_prompt.py` preview | Done |
 | 4 | Ollama client and guardrail pipeline (validate, then repair) | Done |
-| 5 | Golden dataset: 60 cases, guideline, frozen hash, blind second-annotation tool | Done (second annotator pending) |
+| 5 | Golden dataset v2: 180 cases (108 dev / 72 test, 20 critical each), guideline, frozen hash, blind second-annotation tool | Done (second annotator pending) |
 | 6 | Metrics, resumable benchmark runner, 3 experiment configs, quick summary | Done |
 | 7 | Analysis: bootstrap CIs, paired McNemar + Holm, power, calibration, consistency | Done |
-| 8 | Per-ticket regression gate (CI + local), approved baselines, GitHub Actions | Done (CI not yet run on GitHub) |
+| 8 | Per-ticket regression gate (CI + local), approved baselines, GitHub Actions | Done |
+
+## Key result so far
+
+On the 108 dev tickets of answer key v2 (`evaluation/reports/dev_v2_comparison_analysis.md`),
+the production prompt **v6_critical_triggers** (three factual trigger questions, with urgency
+rule 1 applied in code) raised **critical recall from 7/20 to 18/20 on llama3.1:8b and from 4/20
+to 18/20 on qwen2.5:7b**, significant after Holm correction (p = 0.016 and 0.002). Telling the
+model what "critical" means (v5) did not work for qwen (5/20). Trade-offs: false-critical rate
+rose from 2% to 8%, and qwen's escalation recall fell from 0.86 to 0.74. Overall
+all-labels accuracy gains (+3 to +10 points) are not yet significant. The held-out test split has
+not been run.

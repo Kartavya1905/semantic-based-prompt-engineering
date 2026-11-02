@@ -1,14 +1,14 @@
 # =============================================================================
 # FILE:         configs/gates/dev_qwen7b.yaml
 # WHAT IT DOES: The strict local gate, run on your GPU before merging a prompt change:
-#               the production variant on all 36 dev tickets with qwen2.5:7b.
+#               the production variant on all 108 dev tickets with qwen2.5:7b.
 # USE:          python -m evaluation.run_benchmark configs/experiments/gate_dev_qwen7b.yaml
 #               python -m evaluation.regression_gate check configs/gates/dev_qwen7b.yaml
 # TOLERANCE:    Same machine as the baseline, so answers at temperature 0 repeat exactly
 #               (verified 2026-11-02). One net regression is allowed for noise in long tickets;
 #               no newly missed escalation or critical ticket is allowed at all.
-# BASELINE:     evaluation/baselines/dev_qwen7b.json (approved 2026-11-02: all labels 0.56,
-#               critical 5/5, valid 0.97)
+# BASELINE:     evaluation/baselines/dev_qwen7b.json (approved on answer key v2.0.0,
+#               2026-11-02: all labels 0.57, critical 18/20, escalations 26/35, valid 0.99)
 # =============================================================================
 gate_id: dev_qwen7b
 description: Production variant on the full dev split with qwen2.5:7b.

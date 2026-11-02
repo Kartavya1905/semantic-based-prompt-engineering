@@ -28,7 +28,7 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
 from evaluation.experiment_config import load_experiment_config
-from evaluation.golden_case_model import load_golden_cases
+from evaluation.golden_case_model import compute_dataset_sha256, load_golden_cases
 from evaluation.summarize_results import load_quality_frame
 from prompt_engine.composer import PromptComposer
 from prompt_engine.registry import PromptRegistry
@@ -75,17 +75,30 @@ def current_prompt_fingerprint(gate: GateConfig) -> str:
     return PromptComposer(registry).compose(manifest, any_case.input_variables).prompt_fingerprint
 
 
+# The same prompt may also have been run against an older answer key (e.g. v1 and v2): only rows
+# scored against the experiment's CURRENT answer key belong to this check.
+def current_dataset_sha256(gate: GateConfig) -> str:
+    experiment = load_experiment_config(PROJECT_ROOT / gate.experiment_config)
+    return compute_dataset_sha256(experiment.resolved_dataset_path)[:12]
+
+
 def select_variant_rows(
-    quality_frame: pd.DataFrame, gate: GateConfig, prompt_fingerprint: str
+    quality_frame: pd.DataFrame,
+    gate: GateConfig,
+    prompt_fingerprint: str,
+    dataset_sha256: str | None = None,
 ) -> pd.DataFrame:
     variant_rows = quality_frame[
         (quality_frame["prompt_version"] == gate.prompt_version)
         & (quality_frame["model_name"] == gate.model_name)
         & (quality_frame["prompt_fingerprint"] == prompt_fingerprint)
     ]
+    if dataset_sha256 is not None:
+        variant_rows = variant_rows[variant_rows["dataset_sha256"] == dataset_sha256]
     if variant_rows.empty:
         raise ValueError(
-            f"no results for {gate.prompt_version} ({prompt_fingerprint}) on {gate.model_name}: "
+            f"no results for {gate.prompt_version} ({prompt_fingerprint}) on {gate.model_name} "
+            f"with the current answer key: "
             f"run `python -m evaluation.run_benchmark {gate.experiment_config.as_posix()}` first"
         )
     return variant_rows
@@ -224,7 +237,8 @@ def main() -> int:
     gate = load_gate_config(parsed_args.gate_config)
     results_path = parsed_args.results or gate.default_results_path()
     variant_rows = select_variant_rows(
-        load_quality_frame(results_path)[0], gate, current_prompt_fingerprint(gate)
+        load_quality_frame(results_path)[0], gate,
+        current_prompt_fingerprint(gate), current_dataset_sha256(gate),
     )
 
     if parsed_args.command == "approve":

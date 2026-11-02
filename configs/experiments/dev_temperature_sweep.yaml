@@ -2,8 +2,8 @@
 # FILE:         configs/experiments/dev_temperature_sweep.yaml
 # WHAT IT DOES: The main experiment: how do prompt variant, model family and temperature affect
 #               quality and stability on the dev split?
-# SIZE:         per model: 3 variants × (1 run at T=0 + 3 temperatures × 3 seeds) × 36 cases
-#               = 1,080 runs; × 2 models = 2,160 runs (~1-1.5 hours locally; resumable)
+# SIZE:         per model: 3 variants × (1 run at T=0 + 3 temperatures × 3 seeds) × 108 cases
+#               = 3,240 runs; × 2 models = 6,480 runs (~4 hours locally; resumable)
 # USE:          python -m evaluation.run_benchmark configs/experiments/dev_temperature_sweep.yaml
 # =============================================================================
 experiment_id: dev_temperature_sweep
@@ -13,6 +13,6 @@ prompt_versions: [v1_baseline, v2_policy_first, v3_fewshot]
 model_names: ["qwen2.5:7b", "llama3.1:8b"]
 temperatures: [0.0, 0.3, 0.7, 1.0]
 seeds: [11, 23, 37]
-dataset_path: evaluation/golden_datasets/ticket_triage/v1.jsonl
+dataset_path: evaluation/golden_datasets/ticket_triage/v2.jsonl
 dataset_split: dev
 max_concurrency: 2

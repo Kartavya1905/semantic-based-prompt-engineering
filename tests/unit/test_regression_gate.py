@@ -127,6 +127,18 @@ def test_missing_results_for_the_current_prompt_say_what_to_run():
         select_variant_rows(make_rows(), GATE, prompt_fingerprint="fp-never-benchmarked")
 
 
+def test_results_from_an_older_answer_key_are_left_out():
+    # The same prompt run against answer key v1 (36 tickets) and v2: only v2 rows are checked.
+    old_key_rows = make_rows(dataset_sha256="old-key-v1xx")
+    current_key_rows = make_rows(dataset_sha256="new-key-v2xx", completed_at="2026-11-03")
+    selected = select_variant_rows(
+        pd.concat([old_key_rows, current_key_rows]), GATE,
+        prompt_fingerprint="fp-approved", dataset_sha256="new-key-v2xx",
+    )
+    assert set(selected["dataset_sha256"]) == {"new-key-v2xx"}
+    assert len(selected) == len(current_key_rows)
+
+
 def test_current_fingerprint_matches_the_composer():
     from evaluation.regression_gate import current_prompt_fingerprint
     from prompt_engine.composer import PromptComposer

@@ -14,7 +14,7 @@ from prompt_engine.schemas import validate_as_model_output
 from prompt_engine.schemas.ticket_triage import TicketTriageResult
 from prompt_engine.settings import PROJECT_ROOT
 
-DATASET_PATH = PROJECT_ROOT / "evaluation" / "golden_datasets" / "ticket_triage" / "v1.jsonl"
+DATASET_PATH = PROJECT_ROOT / "evaluation" / "golden_datasets" / "ticket_triage" / "v2.jsonl"
 
 
 # --- 1. Helpers: build outcomes the way the pipeline would -------------------------------------

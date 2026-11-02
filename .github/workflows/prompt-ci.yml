@@ -37,8 +37,10 @@ jobs:
         run: pytest
       - name: Schema snapshots unchanged
         run: python scripts/update_schema_snapshots.py --check
-      - name: Answer key unchanged
-        run: python -m evaluation.freeze_golden_dataset evaluation/golden_datasets/ticket_triage/v1.jsonl --check
+      - name: Answer keys unchanged (v2 current, v1 kept for reproducing old results)
+        run: |
+          python -m evaluation.freeze_golden_dataset evaluation/golden_datasets/ticket_triage/v2.jsonl --check
+          python -m evaluation.freeze_golden_dataset evaluation/golden_datasets/ticket_triage/v1.jsonl --check
 
   # --- 2. The regression gate with a real (small, local) model ------------------------------
   prompt-gate:

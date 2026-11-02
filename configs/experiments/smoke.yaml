@@ -11,7 +11,7 @@ prompt_versions: [v1_baseline, v2_policy_first, v3_fewshot]
 model_names: ["qwen2.5:7b"]
 temperatures: [0.0]
 seeds: [42]
-dataset_path: evaluation/golden_datasets/ticket_triage/v1.jsonl
+dataset_path: evaluation/golden_datasets/ticket_triage/v2.jsonl
 dataset_split: dev
 required_tag: smoke
 max_concurrency: 2

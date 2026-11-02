@@ -1,0 +1,40 @@
+{
+  "dataset_file": "v2.jsonl",
+  "dataset_version": "2.0.0",
+  "sha256": "b51a88a20e018d043ddbb22c543ffb58b9ed06c11611cbe212a796e14640520b",
+  "annotation_status": "draft_single_annotator",
+  "annotator_ids": [
+    "claude_draft"
+  ],
+  "case_count": 180,
+  "split_counts": {
+    "dev": 108,
+    "test": 72
+  },
+  "category_counts": {
+    "account": 30,
+    "billing": 36,
+    "feature_request": 10,
+    "other": 10,
+    "technical": 94
+  },
+  "urgency_counts": {
+    "critical": 40,
+    "high": 43,
+    "low": 56,
+    "medium": 41
+  },
+  "slice_counts": {
+    "ambiguous": 19,
+    "legal_or_deletion": 11,
+    "missing_info": 7,
+    "multi_issue": 10,
+    "non_english": 11,
+    "policy_gap": 3,
+    "prompt_injection": 13,
+    "rule_order": 6,
+    "security": 16,
+    "smoke": 11,
+    "very_long": 6
+  }
+}
