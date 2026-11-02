@@ -122,7 +122,7 @@ with `qwen2.5:1.5b` on the runner's CPU.
 | 2 | Modular system components, template, few-shots and 3 manifests | Done |
 | 3 | Registry, composer and `scripts/render_prompt.py` preview | Done |
 | 4 | Ollama client and guardrail pipeline (validate, then repair) | Done |
-| 5 | Golden dataset v2: 180 cases (108 dev / 72 test, 20 critical each), guideline, frozen hash, blind second-annotation tool | Done (second annotator pending) |
+| 5 | Golden dataset v2: 180 cases (108 dev / 72 test, 20 critical each), guideline, frozen hash, blind second-annotation tool | Done (dev split second-annotated: kappa 0.79-0.97; adjudication pending) |
 | 6 | Metrics, resumable benchmark runner, 3 experiment configs, quick summary | Done |
 | 7 | Analysis: bootstrap CIs, paired McNemar + Holm, power, calibration, consistency | Done |
 | 8 | Per-ticket regression gate (CI + local), approved baselines, GitHub Actions | Done |

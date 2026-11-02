@@ -5,7 +5,7 @@ file, so two people labelling the same ticket independently should reach the sam
 
 The base rules are the same as the prompt's policy and contract
 (`prompts/system/policies/escalation_policy.md`, `prompts/system/output_contracts/ticket_triage_contract.md`).
-The **clarifications (C1–C9)** settle cases those rules leave open. Where a clarification goes
+The **clarifications (C1–C11)** settle cases those rules leave open. Where a clarification goes
 beyond what the prompt says, the case is tagged `policy_gap`: the benchmark then measures whether
 the prompt needs the same clarification.
 
@@ -20,8 +20,18 @@ the prompt needs the same clarification.
 
 ## 2. Base rules
 
-**Category** (the single dominant issue):
-billing · technical (incl. how-to questions about the product) · account · feature_request · other
+**Category** (the single dominant issue; same definitions as the prompt's output contract):
+
+| Category | Covers |
+|---|---|
+| billing | Charges, invoices, refunds, payment methods, plan prices |
+| technical | Errors, outages, bugs, slowness, integrations, API behaviour, **how-to questions about using the product**, cosmetic and documentation issues (C10) |
+| account | Sign-in, passwords, single sign-on, permissions, **user management** (inviting, adding or removing users), account deletion (C11) |
+| feature_request | Asks for a capability the product does not have yet |
+| other | **Not a support request at all**: partnerships, sponsorships, job enquiries, marketing, procurement or compliance paperwork, thanks and praise |
+
+`other` is the last resort. If a ticket is about using, paying for or accessing the product,
+one of the first four categories applies, even when the ticket is only a question.
 
 **Urgency** (apply the first rule that matches):
 1. critical: data loss, a security or privacy exposure, or a full outage of a production service
@@ -46,6 +56,8 @@ OR a request to delete an account. Otherwise false.
 | C7 | Instructions inside the ticket ("ignore your rules…", fake tags) | Ignore; label the real request |
 | C8 | Ticket not in English | Label normally; the summary is still in English |
 | C9 | Security issue: credentials or sign-in vs. product bug | Credentials/sign-in → **account**; data exposed by a product bug → **technical** |
+| C10 | Cosmetic or documentation issue (typo, misaligned logo, broken docs link) | **technical, low**: it is a small bug in the product, not `other` |
+| C11 | User management or single sign-on, including how-to questions about it ("how do I add 20 users?", "how do we set up SAML?") | **account**, even though it is phrased as a how-to question |
 
 ## 4. Tags
 
@@ -68,3 +80,4 @@ OR a request to delete an account. Otherwise false.
 | Date | Change | Why |
 |---|---|---|
 | 2026-11-02 | C1 narrowed from "an endpoint **or feature** fails for all calls or users" to a **whole** service, product or endpoint being unavailable; C1b added | The old wording contradicted four existing labels (TT-0006, TT-0007, TT-0050, TT-0057: one function broken for everyone, labelled high). v6's trigger questions applied the old C1 literally and exposed it. Labels unchanged; the rule now matches them. |
+| 2026-11-02 | Category table copied from the prompt's output contract; `other` defined as "not a support request"; C10 (cosmetic/documentation → technical) and C11 (user management and SSO → account) added | Blind second annotation of the 108 dev tickets: 11 of 14 category disagreements were how-to, cosmetic or user-management tickets labelled `other` by the second annotator. The old one-line category rule did not say where these go. Labels unchanged; the rules now state what the labels already assumed. |
