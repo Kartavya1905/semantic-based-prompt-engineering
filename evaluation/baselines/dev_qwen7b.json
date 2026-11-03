@@ -1,13 +1,13 @@
 {
   "gate_id": "dev_qwen7b",
-  "approved_at": "2026-11-02T14:59:09+00:00",
-  "approved_variant": "v6_critical_triggers@2.1.0",
-  "prompt_fingerprint": "545ac67570ce",
+  "approved_at": "2026-11-02T21:20:06+00:00",
+  "approved_variant": "v6_critical_triggers@2.2.0",
+  "prompt_fingerprint": "d60b1c7220f0",
   "model_name": "qwen2.5:7b",
   "dataset_sha256": "b51a88a20e01",
   "metrics": {
     "tickets": 108,
-    "schema_valid_rate": 0.991,
+    "schema_valid_rate": 1.0,
     "all_labels_accuracy": 0.565,
     "urgency_accuracy": 0.769
   },
@@ -76,16 +76,16 @@
       "expected_escalation": true
     },
     "TT-0010": {
-      "all_labels_correct": false,
-      "urgency_correct": false,
-      "escalation_correct": false,
+      "all_labels_correct": true,
+      "urgency_correct": true,
+      "escalation_correct": true,
       "expected_urgency": "low",
       "expected_escalation": false
     },
     "TT-0011": {
       "all_labels_correct": false,
       "urgency_correct": false,
-      "escalation_correct": true,
+      "escalation_correct": false,
       "expected_urgency": "low",
       "expected_escalation": false
     },
@@ -573,8 +573,8 @@
       "expected_escalation": false
     },
     "TT-0105": {
-      "all_labels_correct": true,
-      "urgency_correct": true,
+      "all_labels_correct": false,
+      "urgency_correct": false,
       "escalation_correct": true,
       "expected_urgency": "medium",
       "expected_escalation": false

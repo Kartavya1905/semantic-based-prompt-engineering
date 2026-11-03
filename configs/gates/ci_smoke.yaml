@@ -7,8 +7,8 @@
 #               can differ slightly. Hence 1 net regression and 1 escalation flip are tolerated.
 #               If CI flakes, re-approve from a CI results artifact:
 #               python -m evaluation.regression_gate approve configs/gates/ci_smoke.yaml --results <file>
-# BASELINE:     evaluation/baselines/ci_smoke.json (approved on answer key v2.0.0, 2026-11-02:
-#               all labels 0.36, valid 0.91)
+# BASELINE:     evaluation/baselines/ci_smoke.json (v6_critical_triggers 2.2.0 on answer key
+#               v2.0.0, 2026-11-02: all labels 0.45, valid 1.00)
 # =============================================================================
 gate_id: ci_smoke
 description: Production variant on the 11 smoke tickets with qwen2.5:1.5b.

@@ -12,9 +12,12 @@
 # CHANGES:      2.1.0 (2026-11-02): full_outage_reported and the policy's outage bullet narrowed
 #               to a WHOLE service/product/endpoint (2.0.0 flagged one broken function as an
 #               outage on TT-0006 and TT-0007 with both models).
+#               2.2.0 (2026-11-02): contract 2.2.0, a repair message that says how to fix
+#               "critical" with no trigger. With the old message qwen2.5:7b repeated an
+#               injected "critical" three times and gave no answer (TT-0010).
 # =============================================================================
 prompt_id: ticket_triage
-version: 2.1.0
+version: 2.2.0
 description: v5 with the v2 contract (critical triggers + rule 1 in code). Tests decomposition.
 
 system_components:

@@ -7,8 +7,8 @@
 # TOLERANCE:    Same machine as the baseline, so answers at temperature 0 repeat exactly
 #               (verified 2026-11-02). One net regression is allowed for noise in long tickets;
 #               no newly missed escalation or critical ticket is allowed at all.
-# BASELINE:     evaluation/baselines/dev_qwen7b.json (approved on answer key v2.0.0,
-#               2026-11-02: all labels 0.57, critical 18/20, escalations 26/35, valid 0.99)
+# BASELINE:     evaluation/baselines/dev_qwen7b.json (v6_critical_triggers 2.2.0 on answer key
+#               v2.0.0, 2026-11-02: all labels 0.57, critical 18/20, escalations 26/35, valid 1.00)
 # =============================================================================
 gate_id: dev_qwen7b
 description: Production variant on the full dev split with qwen2.5:7b.

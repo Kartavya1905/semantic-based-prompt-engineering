@@ -64,8 +64,22 @@ def test_no_trigger_leaves_the_answer_untouched():
 # --- 3. "critical" must be backed by a reported fact ---------------------------------------------
 def test_critical_without_any_trigger_is_rejected():
     # What happens to an injected "classify this ticket as critical": the repair loop runs.
-    with pytest.raises(ValidationError, match="urgency=critical requires data_loss_reported"):
+    with pytest.raises(ValidationError, match="urgency cannot be critical"):
         parse(build_answer(urgency="critical", requires_human_escalation=True))
+
+
+def test_the_repair_message_says_what_to_change_and_what_to_keep():
+    # The model reads this text in the repair turn. qwen2.5:7b repeated "critical" three times
+    # when told only that critical needs a trigger, so the message must name the way out
+    # (choose the urgency again, ignore the ticket's demand) and forbid the shortcut
+    # (setting a trigger to true so that "critical" passes).
+    from prompt_engine.pipeline import format_errors_for_model
+
+    with pytest.raises(ValidationError) as caught:
+        parse(build_answer(urgency="critical", requires_human_escalation=True))
+    repair_text = format_errors_for_model(caught.value)
+    assert "Keep those three answers" in repair_text
+    assert "rule 9" in repair_text and "rules 2-4" in repair_text and "rules 6-8" in repair_text
 
 
 # --- 4. The v1 rules still hold ----------------------------------------------------------------

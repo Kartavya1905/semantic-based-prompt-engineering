@@ -139,3 +139,9 @@ model what "critical" means (v5) did not work for qwen (5/20). Trade-offs: false
 rose from 2% to 8%, and qwen's escalation recall fell from 0.86 to 0.74. Overall
 all-labels accuracy gains (+3 to +10 points) are not yet significant. The held-out test split has
 not been run.
+
+**v6 2.2.0** (`evaluation/reports/repair_message_analysis.md`) changes only the repair message for
+"critical" with no trigger: it now says to keep the trigger answers, ignore the ticket's demand and
+choose the urgency again. A ticket demanding "critical" used to end with no answer on qwen2.5:7b
+(TT-0010) and a wrong "critical" on llama3.1:8b (TT-0087); both are now answered correctly, and no
+repair set a trigger to make "critical" fit. Other differences are noise (Holm p = 1).

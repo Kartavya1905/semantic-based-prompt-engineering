@@ -122,5 +122,5 @@
   ],
   "title": "TicketTriageWithTriggers",
   "type": "object",
-  "x-schema-version": "2.1.0"
+  "x-schema-version": "2.2.0"
 }
