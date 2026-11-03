@@ -1,3 +1,4 @@
 # Snapshots are compared byte-for-byte; keep LF endings on every OS.
 tests/snapshots/*.json text eol=lf
 evaluation/golden_datasets/**/*.jsonl text eol=lf
+*.bat text eol=crlf

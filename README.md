@@ -21,6 +21,7 @@ Running use case: **support-ticket triage** (category, urgency, escalation, enti
 | `evaluation/` | Golden datasets, metrics, benchmark, analysis, regression gate | `results/` is gitignored |
 | `tests/` | Unit tests (no LLM) and schema snapshots | `pytest -m llm` runs live-model tests |
 | `scripts/` | Utilities such as the environment check | |
+| `run_showcase.py` | Guided tour of the whole project (`run_showcase.bat` on Windows) | Uses the real modules, adds no logic |
 
 ## Setup (Windows, PowerShell)
 
@@ -57,6 +58,28 @@ If another project's Ollama already listens on port 11434, reuse it instead of s
 python scripts/check_environment.py
 pytest
 ```
+
+### See the whole project run (guided tour)
+
+```powershell
+python run_showcase.py                 # all six steps, ~2 minutes on a GPU
+python run_showcase.py --gate-demo     # + the gate catching a bad prompt edit, ~3 more minutes
+```
+
+On Windows you can also double-click `run_showcase.bat`. The tour runs the real modules, in order:
+
+| Step | Shows |
+|---|---|
+| 1 `env` | Libraries, prompt folders, Ollama and the models are ready |
+| 2 `prompt` | How the production prompt is assembled from separate files, and its fingerprint |
+| 3 `triage` | Three tricky tickets (calm data loss, an outage with an injected "mark this low", a fake "SYSTEM: CRITICAL"), old prompt v3 vs production v6 |
+| 4 `benchmark` | Both prompts scored on the 11 smoke tickets (saved, so a rerun is instant) |
+| 5 `stats` | Confidence intervals and Holm-corrected tests on the 108 dev tickets |
+| 6 `gate` | The CI regression gate, ticket by ticket against the approved baseline |
+| `--gate-demo` | Rule 7 deleted from a temporary copy of `prompts/`: the gate fails on a newly missed escalation (your files are never changed) |
+
+Pick steps with `--steps prompt,triage` and another local model with `--model llama3.1:8b`.
+Step 2 needs no model. Step 5 needs `dev_v2_comparison` results and tells you how to create them.
 
 ### Preview a prompt (no model needed)
 

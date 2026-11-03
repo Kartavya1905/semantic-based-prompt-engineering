@@ -32,7 +32,7 @@ jobs:
       - name: Lint
         run: ruff check .
       - name: Type check
-        run: mypy src scripts tests evaluation
+        run: mypy src scripts tests evaluation run_showcase.py
       - name: Unit tests (no model)
         run: pytest
       - name: Schema snapshots unchanged
